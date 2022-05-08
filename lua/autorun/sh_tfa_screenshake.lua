@@ -38,12 +38,14 @@ if CLIENT then
 	local DolbanulFOVFraction = 0
 
 	local function TFACustomScreenShake(ply, origin, angles, fov, znear, zfar)
-		if not ply:GetActiveWeapon().IsTFAWeapon then return end
+		local weapon = ply:GetActiveWeapon()
+		
+		if not weapon.IsTFAWeapon then return end
 		if not tfa_screenshake_enabled:GetBool() then return end
 
-		local weapon = ply:GetActiveWeapon()
 		local IsDolbanul = ply:GetDolbanul()
-		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 1.5
+
+		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 5
 		local view = {}
 
 		view.origin = origin
@@ -74,15 +76,12 @@ if CLIENT then
 		DolbanulAngleFractionRight = math.Approach(DolbanulAngleFractionRight, 0, FrameTime() * 2.5)
 		DolbanulFOVFraction = math.Approach(DolbanulFOVFraction, 0, FrameTime() * 3)
 
-		--local TFAScreenShakeAngleLeft = Angle(0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * -0.05), InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * 3.5))
-		--local TFAScreenShakeAngleRight = Angle(0, InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * 0.05), InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * -3.5))
-
-		local TFAScreenShakeAngleLeft = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * 3.5))
-		local TFAScreenShakeAngleRight = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * -3.5))
+		local TFAScreenShakeAngleLeft = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce))
+		local TFAScreenShakeAngleRight = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionRight, 0, -ScreenShakeForce))
 
 		TFAScreenShakeLeft = LerpAngle(DolbanulAngleFractionLeft * .25, TFAScreenShakeLeft, TFAScreenShakeAngleLeft)
 		TFAScreenShakeRight = LerpAngle(DolbanulAngleFractionRight * .25, TFAScreenShakeRight, TFAScreenShakeAngleRight)
-		TFAScreenShakeFOV = InElasticEasedLerp(DolbanulFOVFraction, 0, ScreenShakeForce * 5)
+		TFAScreenShakeFOV = InElasticEasedLerp(DolbanulFOVFraction, 0, ScreenShakeForce * 1.5)
 
 		view.angles = view.angles + TFAScreenShakeLeft + TFAScreenShakeRight
 		view.fov = view.fov + TFAScreenShakeFOV
@@ -100,16 +99,18 @@ if CLIENT then
 
 		if not weapon.IsTFAWeapon then return end
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
-
+		
+		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * .075
+		local BlurSpeed = FrameTime() * 12.5
+		
 		local IsDolbanul = ply:GetDolbanul()
-		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 4.5
 
 		if IsDolbanul then
 			DolbanulBlurFraction = 1
 		end
 
-		DolbanulBlurFraction = math.Approach(DolbanulBlurFraction, 0, FrameTime() * 7.5)
+		DolbanulBlurFraction = math.Approach(DolbanulBlurFraction, 0, BlurSpeed)
 
-		return h, v, (f + 0.01) * (DolbanulBlurFraction * BlurForce), r
+		return h, v, f + (DolbanulBlurFraction * BlurForce), r
 	end)
 end
