@@ -17,6 +17,11 @@ hook.Add("TFA_PostPrimaryAttack", "TFA_ScreenShake", function(weapon)
 end)
 
 if CLIENT then
+	local tfa_screenshake_enabled = CreateClientConVar("cl_tfa_screenshake_enabled", 1)
+	local tfa_screenshake_blur_enabled = CreateClientConVar("cl_tfa_screenshake_blur_enabled", 1)
+
+	RunConsoleCommand("mat_motion_blur_enabled", 1)
+
 	local function LerpUnclamped(t, from, to)
 		return t + (from - t) * to;
 	end
@@ -34,10 +39,11 @@ if CLIENT then
 
 	local function TFACustomScreenShake(ply, origin, angles, fov, znear, zfar)
 		if not ply:GetActiveWeapon().IsTFAWeapon then return end
+		if not tfa_screenshake_enabled:GetBool() then return end
 
 		local weapon = ply:GetActiveWeapon()
 		local IsDolbanul = ply:GetDolbanul()
-		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 1.25
+		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 1.5
 		local view = {}
 
 		view.origin = origin
@@ -70,8 +76,9 @@ if CLIENT then
 
 		--local TFAScreenShakeAngleLeft = Angle(0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * -0.05), InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * 3.5))
 		--local TFAScreenShakeAngleRight = Angle(0, InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * 0.05), InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * -3.5))
-		local TFAScreenShakeAngleLeft = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * 4))
-		local TFAScreenShakeAngleRight = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * -4))
+
+		local TFAScreenShakeAngleLeft = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce * 3.5))
+		local TFAScreenShakeAngleRight = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionRight, 0, ScreenShakeForce * -3.5))
 
 		TFAScreenShakeLeft = LerpAngle(DolbanulAngleFractionLeft * .25, TFAScreenShakeLeft, TFAScreenShakeAngleLeft)
 		TFAScreenShakeRight = LerpAngle(DolbanulAngleFractionRight * .25, TFAScreenShakeRight, TFAScreenShakeAngleRight)
@@ -84,4 +91,25 @@ if CLIENT then
 	end
 
 	hook.Add("CalcView", "TFACustomScreenShake", TFACustomScreenShake)
+
+	local DolbanulBlurFraction = 0
+
+	hook.Add("GetMotionBlurValues", "TFACustomScreenShakeBlur", function(h, v, f, r)
+		local ply = LocalPlayer()
+		local weapon = ply:GetActiveWeapon()
+
+		if not weapon.IsTFAWeapon then return end
+		if not tfa_screenshake_blur_enabled:GetBool() then return end
+
+		local IsDolbanul = ply:GetDolbanul()
+		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 4.5
+
+		if IsDolbanul then
+			DolbanulBlurFraction = 1
+		end
+
+		DolbanulBlurFraction = math.Approach(DolbanulBlurFraction, 0, FrameTime() * 7.5)
+
+		return h, v, (f + 0.01) * (DolbanulBlurFraction * BlurForce), r
+	end)
 end
