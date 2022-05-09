@@ -45,7 +45,7 @@ if CLIENT then
 
 		local IsDolbanul = ply:GetDolbanul()
 
-		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 5
+		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 7.5
 		local view = {}
 
 		view.origin = origin
@@ -67,13 +67,13 @@ if CLIENT then
 			DolbanulAngleFractionLeft = 1
 			DolbanulFOVFraction = 1
 
-			timer.Simple(0.04, function()
+			timer.Simple(0.035, function()
 				DolbanulAngleFractionRight = 1
 			end)
 		end
 
-		DolbanulAngleFractionLeft = math.Approach(DolbanulAngleFractionLeft, 0, FrameTime() * 2.5)
-		DolbanulAngleFractionRight = math.Approach(DolbanulAngleFractionRight, 0, FrameTime() * 2.5)
+		DolbanulAngleFractionLeft = math.Approach(DolbanulAngleFractionLeft, 0, FrameTime() * 3)
+		DolbanulAngleFractionRight = math.Approach(DolbanulAngleFractionRight, 0, FrameTime() * 3)
 		DolbanulFOVFraction = math.Approach(DolbanulFOVFraction, 0, FrameTime() * 3)
 
 		local TFAScreenShakeAngleLeft = Angle(0, 0, InElasticEasedLerp(DolbanulAngleFractionLeft, 0, ScreenShakeForce))
@@ -81,7 +81,7 @@ if CLIENT then
 
 		TFAScreenShakeLeft = LerpAngle(DolbanulAngleFractionLeft * .25, TFAScreenShakeLeft, TFAScreenShakeAngleLeft)
 		TFAScreenShakeRight = LerpAngle(DolbanulAngleFractionRight * .25, TFAScreenShakeRight, TFAScreenShakeAngleRight)
-		TFAScreenShakeFOV = InElasticEasedLerp(DolbanulFOVFraction, 0, ScreenShakeForce * 1.5)
+		TFAScreenShakeFOV = InElasticEasedLerp(DolbanulFOVFraction, 0, ScreenShakeForce)
 
 		view.angles = view.angles + TFAScreenShakeLeft + TFAScreenShakeRight
 		view.fov = view.fov + TFAScreenShakeFOV
@@ -100,7 +100,7 @@ if CLIENT then
 		if not weapon.IsTFAWeapon then return end
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
 		
-		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * .075
+		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 0.15
 		local BlurSpeed = FrameTime() * 12.5
 		
 		local IsDolbanul = ply:GetDolbanul()
