@@ -9,6 +9,7 @@ function meta:SetDolbanul(value)
 end
 
 hook.Add("TFA_PostPrimaryAttack", "TFA_ScreenShake", function(weapon)
+	if weapon:GetOwner():IsNPC() then return end
 	weapon:GetOwner():SetDolbanul(true)
 
 	timer.Simple(0.0001, function()
@@ -42,6 +43,7 @@ if CLIENT then
 		
 		if not weapon.IsTFAWeapon then return end
 		if not tfa_screenshake_enabled:GetBool() then return end
+		if ply:IsNPC() then return end
 
 		local IsDolbanul = ply:GetDolbanul()
 
@@ -99,6 +101,7 @@ if CLIENT then
 
 		if not weapon.IsTFAWeapon then return end
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
+		if ply:IsNPC() then return end
 		
 		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 0.15
 		local BlurSpeed = FrameTime() * 12.5
