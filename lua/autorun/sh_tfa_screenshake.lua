@@ -20,11 +20,12 @@ end)
 if CLIENT then
 	local tfa_screenshake_enabled = CreateClientConVar("cl_tfa_screenshake_enabled", 1)
 	local tfa_screenshake_blur_enabled = CreateClientConVar("cl_tfa_screenshake_blur_enabled", 1)
+	local tfa_screenshake_multiplier = CreateClientConVar("cl_tfa_screenshake_multiplier", 1)
 
 	RunConsoleCommand("mat_motion_blur_enabled", 1)
 
 	local function LerpUnclamped(t, from, to)
-		return t + (from - t) * to;
+		return t + (from - t) * to
 	end
 
 	local function InElasticEasedLerp(fraction, from, to)
@@ -47,7 +48,7 @@ if CLIENT then
 
 		local IsDolbanul = ply:GetDolbanul()
 
-		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 7.5
+		local ScreenShakeForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 7.5 * tfa_screenshake_multiplier:GetFloat()
 		local view = {}
 
 		view.origin = origin
@@ -103,7 +104,7 @@ if CLIENT then
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
 		
-		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 0.15
+		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 0.15 * tfa_screenshake_multiplier:GetFloat()
 		local BlurSpeed = FrameTime() * 12.5
 		
 		local IsDolbanul = ply:GetDolbanul()
