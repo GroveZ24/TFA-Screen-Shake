@@ -105,7 +105,7 @@ if CLIENT then
 		if ply:IsNPC() then return end
 		
 		local BlurForce = (weapon.Primary.KickUp + weapon.Primary.KickHorizontal) * 0.15 * tfa_screenshake_multiplier:GetFloat()
-		local BlurSpeed = FrameTime() * 12.5
+		local BlurSpeed = FrameTime() * 10
 		
 		local IsDolbanul = ply:GetDolbanul()
 
