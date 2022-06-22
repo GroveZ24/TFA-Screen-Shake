@@ -72,6 +72,14 @@ if CLIENT then
 		view.zfar = zfar
 		view.drawviewer = false
 
+		if (IsValid(wep)) then
+			local func = wep.CalcView
+
+			if (func) then
+				view.origin, view.angles, view.fov = func(wep, ply, origin, angles, fov)
+			end
+		end
+
 		local ScreenShakeSmoothing = 25
 		local ScreenShakeFOVForceMultiplier = wep.ScreenShakeFOVForceMultiplierOverride or tfa_screenshake_fov_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 7.5
 		local ScreenShakeForceMultiplier = wep.ScreenShakeForceMultiplierOverride or tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 10
