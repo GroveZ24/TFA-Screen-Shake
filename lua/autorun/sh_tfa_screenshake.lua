@@ -103,8 +103,8 @@ if CLIENT then
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
 
-		local ScreenShakeBlurForce = wep.ScreenShakeForceMultiplierOverride or tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .5
-		local ScreenShakeBlurSpeed = 12.5
+		local ScreenShakeBlurForce = wep.ScreenShakeForceMultiplierOverride or tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .15
+		local ScreenShakeBlurSpeed = 10
 
 		ScreenShakeBlurFraction = math.Approach(ScreenShakeBlurFraction, 0, FrameTime() * ScreenShakeBlurSpeed)
 
