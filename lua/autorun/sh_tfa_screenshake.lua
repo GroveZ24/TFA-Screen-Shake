@@ -43,7 +43,7 @@ if CLIENT then
 	local ScreenShakeRight = Angle(0, 0, 0)
 	local ScreenShakeBlurFraction = 0
 
-	net.Receive("TFA_ScreenShake", function(len, ply)
+	net.Receive("TFA_ScreenShake", function(len, ply) -- Shitcode alert https://sun9-78.userapi.com/impg/TqYCCA61j-kxD-9MoVoUjTWvTXynuNA9Io5ioA/6gD0XRvMC7g.jpg?size=400x297&quality=95&sign=aca8a51f6971b828d7a31b56e7622ec1&type=album
 		if net.ReadBool() then
 			ScreenShakeFOVFraction = 1
 			ScreenShakeLeftFraction = 1
@@ -91,7 +91,7 @@ if CLIENT then
 		view.angles = view.angles + ScreenShakeLeft + ScreenShakeRight
 		view.fov = view.fov + ScreenShakeFOV
 
-		return view
+		return view -- I can't make it so that it doesn't break anything https://sun9-43.userapi.com/impg/PGm6IiHDHfMXj7w8mB-5E02OoILW6XQQ47C97w/c8JZpgKgoPo.jpg?size=793x917&quality=96&sign=9c9a1d6cad71c7efcc5629ad6dde79a8&type=album
 	end)
 
 	hook.Add("GetMotionBlurValues", "TFA_CustomScreenShakeBlur", function(h, v, f, r)
