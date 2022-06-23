@@ -3,6 +3,8 @@ if SERVER then
 
 	hook.Add("TFA_PostPrimaryAttack", "TFA_ScreenShakeDetect", function(wep)
 		if wep:GetOwner():IsNPC() then return end
+		if not wep.IsTFAWeapon then return end
+		if not wep:GetOwner():Alive() then return end
 
 		net.Start("TFA_ScreenShake")
 		net.WriteBool(true)
