@@ -82,9 +82,9 @@ if CLIENT then
 			end
 		end
 
-		local FOVMul = wep.ScreenShakeForceMultiplier or 1
+		local FOVMul = wep.ScreenShakeFOVMultiplier or 1
 		local ForceMul = wep.ScreenShakeForceMultiplier or 1
-		local SpeedMul = wep.ScreenShakeForceMultiplier or 1
+		local SpeedMul = wep.ScreenShakeSpeedMultiplier or 1
 
 		local ScreenShakeSmoothing = 25
 		local ScreenShakeFOVForceMultiplier = tfa_screenshake_fov_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 7.5 * FOVMul
@@ -118,7 +118,7 @@ if CLIENT then
 		if ply:IsNPC() then return end
 
 		local ForceMul = wep.ScreenShakeForceMultiplier or 1
-		local SpeedMul = wep.ScreenShakeForceMultiplier or 1
+		local SpeedMul = wep.ScreenShakeSpeedMultiplier or 1
 
 		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .15 * ForceMul
 		local ScreenShakeBlurSpeed = tfa_screenshake_speed_multiplier:GetFloat() * 10 * SpeedMul
