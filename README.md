@@ -10,8 +10,8 @@ Optional screen shake for use with TFA Base
 
 ### For devs:
 You can customize the screen shake on a per-weapon basis using:
-- `SWEP.ScreenShakeForceMultiplierOverride` - Overrides screen shake force multiplier
-- `SWEP.ScreenShakeFOVForceMultiplierOverride` - Overrides screen shake FOV force multiplier
-- `SWEP.ScreenShakeSpeedMultiplierOverride` - Overrides screen shake speed multiplier
+- `SWEP.ScreenShakeForceMultiplier` - Overrides screen shake force multiplier
+- `SWEP.ScreenShakeFOVForceMultiplier` - Overrides screen shake FOV force multiplier
+- `SWEP.ScreenShakeSpeedMultiplier` - Overrides screen shake speed multiplier
 
 **NOTE:** I used `CalcView` and `GetMotionBlurValues` hooks, keep in mind that they're incompatible with similar hooks in other mods. Blame me and my shitcode.
