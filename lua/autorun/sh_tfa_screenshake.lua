@@ -82,10 +82,14 @@ if CLIENT then
 			end
 		end
 
+		local FOVMul = wep.ScreenShakeForceMultiplier or 1
+		local ForceMul = wep.ScreenShakeForceMultiplier or 1
+		local SpeedMul = wep.ScreenShakeForceMultiplier or 1
+
 		local ScreenShakeSmoothing = 25
-		local ScreenShakeFOVForceMultiplier = wep.ScreenShakeFOVForceMultiplierOverride or tfa_screenshake_fov_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 7.5
-		local ScreenShakeForceMultiplier = wep.ScreenShakeForceMultiplierOverride or tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 10
-		local ScreenShakeSpeedMultiplier = wep.ScreenShakeSpeedMultiplierOverride or tfa_screenshake_speed_multiplier:GetFloat() * 2
+		local ScreenShakeFOVForceMultiplier = tfa_screenshake_fov_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 7.5 * FOVMul
+		local ScreenShakeForceMultiplier = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 10 * ForceMul
+		local ScreenShakeSpeedMultiplier = tfa_screenshake_speed_multiplier:GetFloat() * 2 * SpeedMul
 
 		ScreenShakeFOVFraction = math.Approach(ScreenShakeFOVFraction, 0, FrameTime() * ScreenShakeSpeedMultiplier * 0.75)
 		ScreenShakeFOV = InElasticEasedLerp(ScreenShakeFOVFraction, 0, ScreenShakeFOVForceMultiplier)
@@ -113,8 +117,11 @@ if CLIENT then
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
 
-		local ScreenShakeBlurForce = wep.ScreenShakeForceMultiplierOverride or tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .15
-		local ScreenShakeBlurSpeed = wep.ScreenShakeSpeedMultiplierOverride or tfa_screenshake_speed_multiplier:GetFloat() * 10
+		local ForceMul = wep.ScreenShakeForceMultiplier or 1
+		local SpeedMul = wep.ScreenShakeForceMultiplier or 1
+
+		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .15 * ForceMul
+		local ScreenShakeBlurSpeed = tfa_screenshake_speed_multiplier:GetFloat() * 10 * SpeedMul
 
 		ScreenShakeBlurFraction = math.Approach(ScreenShakeBlurFraction, 0, FrameTime() * ScreenShakeBlurSpeed)
 
