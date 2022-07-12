@@ -108,7 +108,7 @@ if CLIENT then
 		return view -- I can't make it so that it doesn't break anything https://sun9-43.userapi.com/impg/PGm6IiHDHfMXj7w8mB-5E02OoILW6XQQ47C97w/c8JZpgKgoPo.jpg?size=793x917&quality=96&sign=9c9a1d6cad71c7efcc5629ad6dde79a8&type=album
 	end)
 
-	hook.Add("GetMotionBlurValues", "TFA_CustomScreenShakeBlur", function(h, v, f, r)
+	hook.Add("GetMotionBlurValues", "TFA_CustomScreenShake_Blur", function(h, v, f, r)
 		local ply = LocalPlayer()
 		local wep = ply:GetActiveWeapon()
 
@@ -120,7 +120,7 @@ if CLIENT then
 		local ForceMul = wep.ScreenShakeForceMultiplier or 1
 		local SpeedMul = wep.ScreenShakeSpeedMultiplier or 1
 
-		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .15 * ForceMul
+		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .1 * ForceMul
 		local ScreenShakeBlurSpeed = tfa_screenshake_speed_multiplier:GetFloat() * 10 * SpeedMul
 
 		ScreenShakeBlurFraction = math.Approach(ScreenShakeBlurFraction, 0, FrameTime() * ScreenShakeBlurSpeed)
