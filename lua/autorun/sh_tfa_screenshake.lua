@@ -45,7 +45,7 @@ if CLIENT then
 	local ScreenShakeRight = Angle(0, 0, 0)
 	local ScreenShakeBlurFraction = 0
 
-	net.Receive("TFA_ScreenShake", function(len, ply) -- Shitcode alert https://sun9-78.userapi.com/impg/TqYCCA61j-kxD-9MoVoUjTWvTXynuNA9Io5ioA/6gD0XRvMC7g.jpg?size=400x297&quality=95&sign=aca8a51f6971b828d7a31b56e7622ec1&type=album
+	net.Receive("TFA_ScreenShake", function(len, ply) -- Shitcode alert https://sun9-85.userapi.com/impg/L7Oqe-ZpXe9Oh1h7bkdYli1VyQ_6osCRmMY9OA/XfTTKswiz6o.jpg?size=1080x752&quality=95&sign=e71bbdfb084836e106924fbc213407ca&type=album
 		if net.ReadBool() then
 			ScreenShakeFOVFraction = 1
 			ScreenShakeLeftFraction = 1
@@ -82,14 +82,14 @@ if CLIENT then
 			end
 		end
 
-		local FOVMul = wep.ScreenShakeFOVMultiplier or 1
-		local ForceMul = wep.ScreenShakeForceMultiplier or 1
-		local SpeedMul = wep.ScreenShakeSpeedMultiplier or 1
+		local FOVMul = wep:GetStat("ScreenShakeFOVMultiplier") or 1
+		local ForceMul = wep:GetStat("ScreenShakeForceMultiplier") or 1
+		local SpeedMul = wep:GetStat("ScreenShakeSpeedMultiplier") or 1
 
-		local ScreenShakeSmoothing = 25
-		local ScreenShakeFOVForceMultiplier = tfa_screenshake_fov_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 7.5 * FOVMul
-		local ScreenShakeForceMultiplier = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * 10 * ForceMul
-		local ScreenShakeSpeedMultiplier = tfa_screenshake_speed_multiplier:GetFloat() * 2 * SpeedMul
+		local ScreenShakeSmoothing = 5
+		local ScreenShakeFOVForceMultiplier = tfa_screenshake_fov_force_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 7.5 * FOVMul
+		local ScreenShakeForceMultiplier = tfa_screenshake_force_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 50 * ForceMul
+		local ScreenShakeSpeedMultiplier = tfa_screenshake_speed_multiplier:GetFloat() * 1.5 * SpeedMul
 
 		ScreenShakeFOVFraction = math.Approach(ScreenShakeFOVFraction, 0, FrameTime() * ScreenShakeSpeedMultiplier * 0.75)
 		ScreenShakeFOV = InElasticEasedLerp(ScreenShakeFOVFraction, 0, ScreenShakeFOVForceMultiplier)
@@ -105,7 +105,10 @@ if CLIENT then
 		view.angles = view.angles + ScreenShakeLeft + ScreenShakeRight
 		view.fov = view.fov + ScreenShakeFOV
 
-		return view -- I can't make it so that it doesn't break anything https://sun9-43.userapi.com/impg/PGm6IiHDHfMXj7w8mB-5E02OoILW6XQQ47C97w/c8JZpgKgoPo.jpg?size=793x917&quality=96&sign=9c9a1d6cad71c7efcc5629ad6dde79a8&type=album
+		-- Fucked up FrameTime() shit cannot been fixed due to my skill issue
+		-- Also I can't make it so that it doesn't break anything https://sun9-43.userapi.com/impg/PGm6IiHDHfMXj7w8mB-5E02OoILW6XQQ47C97w/c8JZpgKgoPo.jpg?size=793x917&quality=96&sign=9c9a1d6cad71c7efcc5629ad6dde79a8&type=album
+
+		return view
 	end)
 
 	hook.Add("GetMotionBlurValues", "TFA_CustomScreenShake_Blur", function(h, v, f, r)
@@ -117,11 +120,11 @@ if CLIENT then
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
 
-		local ForceMul = wep.ScreenShakeForceMultiplier or 1
-		local SpeedMul = wep.ScreenShakeSpeedMultiplier or 1
+		local ForceMul = wep:GetStat("ScreenShakeForceMultiplier") or 1
+		local SpeedMul = wep:GetStat("ScreenShakeSpeedMultiplier") or 1
 
-		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep.Primary.KickUp + wep.Primary.KickHorizontal) * .1 * ForceMul
-		local ScreenShakeBlurSpeed = tfa_screenshake_speed_multiplier:GetFloat() * 10 * SpeedMul
+		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 0.075 * ForceMul
+		local ScreenShakeBlurSpeed = tfa_screenshake_speed_multiplier:GetFloat() * 7.5 * SpeedMul
 
 		ScreenShakeBlurFraction = math.Approach(ScreenShakeBlurFraction, 0, FrameTime() * ScreenShakeBlurSpeed)
 
