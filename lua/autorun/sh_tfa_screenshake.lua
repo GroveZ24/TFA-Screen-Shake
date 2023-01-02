@@ -6,23 +6,18 @@ if SERVER then
 		if not wep.IsTFAWeapon then return end
 		if not wep:GetOwner():Alive() then return end
 
-		net.Start("TFA_ScreenShake")
-		net.WriteBool(true)
-		net.Send(wep:GetOwner())
+		-- ТЫ ЧТО ТУТ БЛЯ ЗАБЫЛ? https://sun9-85.userapi.com/impg/fPEvcII-3N_I59My23iIsd_GnR1lybJ26Pj2dw/mOug2t0Id2c.jpg?size=600x600&quality=96&sign=5d5890625b0bae2702c626199bdd82c3&type=album
 
-		timer.Simple(0.0001, function()
-			net.Start("TFA_ScreenShake")
-			net.WriteBool(false)
-			net.Send(wep:GetOwner())
-		end)
+		net.Start("TFA_ScreenShake")
+		net.Send(wep:GetOwner())
 	end)
 end
 
 if CLIENT then
 	local tfa_screenshake_enabled = CreateClientConVar("cl_tfa_screenshake_enabled", 1)
 	local tfa_screenshake_blur_enabled = CreateClientConVar("cl_tfa_screenshake_blur_enabled", 1)
-	local tfa_screenshake_force_multiplier = CreateClientConVar("cl_tfa_screenshake_force_multiplier", 1)
-	local tfa_screenshake_fov_force_multiplier = CreateClientConVar("cl_tfa_screenshake_fov_force_multiplier", 1)
+	local tfa_screenshake_strength_multiplier = CreateClientConVar("cl_tfa_screenshake_strength_multiplier", 1)
+	local tfa_screenshake_fov_strength_multiplier = CreateClientConVar("cl_tfa_screenshake_fov_strength_multiplier", 1)
 	local tfa_screenshake_speed_multiplier = CreateClientConVar("cl_tfa_screenshake_speed_multiplier", 1)
 
 	RunConsoleCommand("mat_motion_blur_enabled", 1)
@@ -44,18 +39,6 @@ if CLIENT then
 	local ScreenShakeRightAngle = Angle(0, 0, 0)
 	local ScreenShakeRight = Angle(0, 0, 0)
 	local ScreenShakeBlurFraction = 0
-
-	net.Receive("TFA_ScreenShake", function(len, ply) -- Shitcode alert https://sun9-85.userapi.com/impg/L7Oqe-ZpXe9Oh1h7bkdYli1VyQ_6osCRmMY9OA/XfTTKswiz6o.jpg?size=1080x752&quality=95&sign=e71bbdfb084836e106924fbc213407ca&type=album
-		if net.ReadBool() then
-			ScreenShakeFOVFraction = 1
-			ScreenShakeLeftFraction = 1
-			ScreenShakeBlurFraction = 1
-
-			timer.Simple(0.04, function()
-				ScreenShakeRightFraction = 1
-			end)
-		end
-	end)
 
 	hook.Add("CalcView", "TFA_CustomScreenShake", function (ply, origin, angles, fov, znear, zfar)
 		local wep = ply:GetActiveWeapon()
@@ -83,23 +66,35 @@ if CLIENT then
 		end
 
 		local FOVMul = wep:GetStat("ScreenShakeFOVMultiplier") or 1
-		local ForceMul = wep:GetStat("ScreenShakeForceMultiplier") or 1
+		local StrengthMul = wep:GetStat("ScreenShakeStrengthMultiplier") or 1
 		local SpeedMul = wep:GetStat("ScreenShakeSpeedMultiplier") or 1
 
 		local ScreenShakeSmoothing = 5
-		local ScreenShakeFOVForceMultiplier = tfa_screenshake_fov_force_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 7.5 * FOVMul
-		local ScreenShakeForceMultiplier = tfa_screenshake_force_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 50 * ForceMul
+		local ScreenShakeFOVStrengthMultiplier = tfa_screenshake_fov_strength_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 7.5 * FOVMul
+		local ScreenShakeStrengthMultiplier = tfa_screenshake_strength_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 30 * StrengthMul
 		local ScreenShakeSpeedMultiplier = tfa_screenshake_speed_multiplier:GetFloat() * 1.5 * SpeedMul
 
-		ScreenShakeFOVFraction = math.Approach(ScreenShakeFOVFraction, 0, FrameTime() * ScreenShakeSpeedMultiplier * 0.75)
-		ScreenShakeFOV = InElasticEasedLerp(ScreenShakeFOVFraction, 0, ScreenShakeFOVForceMultiplier)
+		net.Receive("TFA_ScreenShake", function(len, ply)
+			ScreenShakeFOVFraction = 1
+			ScreenShakeBlurFraction = 1
+			ScreenShakeLeftFraction = 1
+
+			timer.Simple(0.025 * ScreenShakeSpeedMultiplier, function()
+				ScreenShakeRightFraction = 1
+			end)
+		end)
+
+		-- Shitcode alert https://sun9-85.userapi.com/impg/L7Oqe-ZpXe9Oh1h7bkdYli1VyQ_6osCRmMY9OA/XfTTKswiz6o.jpg?size=1080x752&quality=95&sign=e71bbdfb084836e106924fbc213407ca&type=album
+
+		ScreenShakeFOVFraction = math.Approach(ScreenShakeFOVFraction, 0, FrameTime() * ScreenShakeSpeedMultiplier * 0.5)
+		ScreenShakeFOV = InElasticEasedLerp(ScreenShakeFOVFraction, 0, ScreenShakeFOVStrengthMultiplier)
 
 		ScreenShakeLeftFraction = math.Approach(ScreenShakeLeftFraction, 0, FrameTime() * ScreenShakeSpeedMultiplier)
-		ScreenShakeLeftAngle = Angle(0, 0, InElasticEasedLerp(ScreenShakeLeftFraction, 0, ScreenShakeForceMultiplier))
+		ScreenShakeLeftAngle = Angle(0, 0, InElasticEasedLerp(ScreenShakeLeftFraction, 0, ScreenShakeStrengthMultiplier))
 		ScreenShakeLeft = LerpAngle(FrameTime() * ScreenShakeSmoothing, ScreenShakeLeft, ScreenShakeLeftAngle)
 
 		ScreenShakeRightFraction = math.Approach(ScreenShakeRightFraction, 0, FrameTime() * ScreenShakeSpeedMultiplier)		
-		ScreenShakeRightAngle = Angle(0, 0, InElasticEasedLerp(ScreenShakeRightFraction, 0, -ScreenShakeForceMultiplier))		
+		ScreenShakeRightAngle = Angle(0, 0, InElasticEasedLerp(ScreenShakeRightFraction, 0, -ScreenShakeStrengthMultiplier))		
 		ScreenShakeRight = LerpAngle(FrameTime() * ScreenShakeSmoothing, ScreenShakeRight, ScreenShakeRightAngle)
 
 		view.angles = view.angles + ScreenShakeLeft + ScreenShakeRight
@@ -120,14 +115,14 @@ if CLIENT then
 		if not tfa_screenshake_blur_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
 
-		local ForceMul = wep:GetStat("ScreenShakeForceMultiplier") or 1
+		local StrengthMul = wep:GetStat("ScreenShakeStrengthMultiplier") or 1
 		local SpeedMul = wep:GetStat("ScreenShakeSpeedMultiplier") or 1
 
-		local ScreenShakeBlurForce = tfa_screenshake_force_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 0.075 * ForceMul
+		local ScreenShakeBlurStrength = tfa_screenshake_strength_multiplier:GetFloat() * (wep:GetStat("Primary.KickUp") + wep:GetStat("Primary.KickHorizontal")) * 0.05 * StrengthMul
 		local ScreenShakeBlurSpeed = tfa_screenshake_speed_multiplier:GetFloat() * 7.5 * SpeedMul
 
 		ScreenShakeBlurFraction = math.Approach(ScreenShakeBlurFraction, 0, FrameTime() * ScreenShakeBlurSpeed)
 
-		return h, v, f + (ScreenShakeBlurFraction * ScreenShakeBlurForce), r
+		return h, v, f + (ScreenShakeBlurFraction * ScreenShakeBlurStrength), r
 	end)
 end
