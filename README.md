@@ -14,4 +14,6 @@ You can customize the screen shake on a per-weapon basis using:
 - `SWEP.ScreenShakeFOVMultiplier` - Screen shake FOV multiplier
 - `SWEP.ScreenShakeSpeedMultiplier` - Screen shake speed multiplier
 
-**NOTE:** I used CalcView and GetMotionBlurValues hooks, keep in mind that they're incompatible with similar hooks in other mods. Blame me, gmod, ur addons and my sh#tcode. Also, I haven't tested this sh#t in multiplayer and never will.
+**NOTE:** I used CalcView and GetMotionBlurValues hooks, keep in mind that they're incompatible with similar hooks in other mods. Blame me, gmod, ur addons and my shitcode. Also, I haven't tested this sh#t in multiplayer and never will.
+
+**UPD 21.07.2023:** AyyKyu have fixed my shitсode instead of me, now it shouldn't break because of viewbobs and such.
