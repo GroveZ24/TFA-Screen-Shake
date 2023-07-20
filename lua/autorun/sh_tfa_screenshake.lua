@@ -40,30 +40,16 @@ if CLIENT then
 	local ScreenShakeRight = Angle(0, 0, 0)
 	local ScreenShakeBlurFraction = 0
 
+	local hook_diving = false
+
 	hook.Add("CalcView", "TFA_CustomScreenShake", function (ply, origin, angles, fov, znear, zfar)
+		if hook_diving == true then return end
 		local wep = ply:GetActiveWeapon()
 
 		if not wep.IsTFAWeapon then return end
 		if not ply:Alive() then return end
 		if not tfa_screenshake_enabled:GetBool() then return end
 		if ply:IsNPC() then return end
-
-		local view = {}
-
-		view.origin = origin
-		view.angles = angles
-		view.fov = fov
-		view.znear = znear
-		view.zfar = zfar
-		view.drawviewer = false
-
-		if (IsValid(wep)) then
-			local func = wep.CalcView
-
-			if (func) then
-				view.origin, view.angles, view.fov = func(wep, ply, origin, angles, fov)
-			end
-		end
 
 		local FOVMul = wep:GetStat("ScreenShakeFOVMultiplier") or 1
 		local StrengthMul = wep:GetStat("ScreenShakeStrengthMultiplier") or 1
@@ -97,13 +83,19 @@ if CLIENT then
 		ScreenShakeRightAngle = Angle(0, 0, InElasticEasedLerp(ScreenShakeRightFraction, 0, -ScreenShakeStrengthMultiplier))		
 		ScreenShakeRight = LerpAngle(FrameTime() * ScreenShakeSmoothing, ScreenShakeRight, ScreenShakeRightAngle)
 
-		view.angles = view.angles + ScreenShakeLeft + ScreenShakeRight
-		view.fov = view.fov + ScreenShakeFOV
+		angles:Add(ScreenShakeLeft)
+		angles:Add(ScreenShakeRight)
+
+		hook_diving = true
+
+		local hook_dive_return = hook.Run("CalcView", ply, origin, angles, fov, znear, zfar) 
+		hook_dive_return.fov = hook_dive_return.fov + ScreenShakeFOV
+
+		hook_diving = false
+
+		return hook_dive_return
 
 		-- Fucked up FrameTime() shit cannot been fixed due to my skill issue
-		-- Also I can't make it so that it doesn't break anything https://sun9-43.userapi.com/impg/PGm6IiHDHfMXj7w8mB-5E02OoILW6XQQ47C97w/c8JZpgKgoPo.jpg?size=793x917&quality=96&sign=9c9a1d6cad71c7efcc5629ad6dde79a8&type=album
-
-		return view
 	end)
 
 	hook.Add("GetMotionBlurValues", "TFA_CustomScreenShake_Blur", function(h, v, f, r)
